@@ -1,0 +1,67 @@
+---
+---
+
+<form class="newsletter-form space-y-2" novalidate>
+  <label for="newsletter-email" class="text-sm font-semibold text-(--color-text-primary)">
+    Subscribe
+  </label>
+  <p class="text-xs text-(--color-text-secondary)">
+    Get new posts delivered to your inbox.
+  </p>
+  <div class="flex gap-2">
+    <input
+      id="newsletter-email"
+      type="email"
+      name="email"
+      required
+      placeholder="you@example.com"
+      class="flex-1 min-w-0 px-3 py-1.5 text-sm rounded border border-(--color-border) bg-(--color-bg-primary) text-(--color-text-primary) focus:outline-none focus:border-(--color-accent) transition-colors"
+    />
+    <button
+      type="submit"
+      class="px-3 py-1.5 text-sm rounded bg-(--color-accent) text-white hover:bg-(--color-accent-hover) transition-colors cursor-pointer"
+    >
+      Join
+    </button>
+  </div>
+  <p class="newsletter-status text-xs text-(--color-text-secondary) min-h-[1em]"></p>
+</form>
+
+<script is:inline>
+  function initNewsletterForm() {
+    document.querySelectorAll('.newsletter-form').forEach(form => {
+      if (form.dataset.initialized) return;
+      form.dataset.initialized = 'true';
+      const status = form.querySelector('.newsletter-status');
+      const input = form.querySelector('input[name="email"]');
+      const button = form.querySelector('button[type="submit"]');
+
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const email = input.value.trim();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          status.textContent = 'Please enter a valid email.';
+          return;
+        }
+        button.disabled = true;
+        status.textContent = 'Submitting…';
+        try {
+          const res = await fetch('/api/newsletter', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+          if (!res.ok) throw new Error('Request failed');
+          status.textContent = "Thanks! We'll be in touch.";
+          input.value = '';
+        } catch {
+          status.textContent = 'Something went wrong. Please try again.';
+        } finally {
+          button.disabled = false;
+        }
+      });
+    });
+  }
+  initNewsletterForm();
+  document.addEventListener('astro:after-swap', initNewsletterForm);
+</script>

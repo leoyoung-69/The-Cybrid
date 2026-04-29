@@ -1,0 +1,31 @@
+---
+interface Props {
+  type?: 'note' | 'tip' | 'warning' | 'danger';
+  title?: string;
+}
+
+const { type = 'note', title } = Astro.props;
+
+const palette = {
+  note: { accent: '#6366f1', label: 'NOTE', icon: 'ℹ' },
+  tip: { accent: '#10b981', label: 'TIP', icon: '✓' },
+  warning: { accent: '#f59e0b', label: 'WARNING', icon: '⚠' },
+  danger: { accent: '#ef4444', label: 'DANGER', icon: '✕' },
+};
+
+const { accent, label, icon } = palette[type];
+const displayTitle = title ?? label;
+---
+
+<aside
+  class="callout my-4 px-4 py-3 rounded-r-lg border-l-4"
+  style={`border-left-color: ${accent}; background-color: ${accent}14;`}
+>
+  <div class="flex items-center gap-2 font-semibold text-sm mb-1" style={`color: ${accent};`}>
+    <span aria-hidden="true">{icon}</span>
+    <span>{displayTitle}</span>
+  </div>
+  <div class="text-(--color-text-primary) text-sm">
+    <slot />
+  </div>
+</aside>

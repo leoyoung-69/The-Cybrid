@@ -1,0 +1,39 @@
+---
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<span class="view-count" data-slug={slug} aria-live="polite">
+  <span class="view-count-value">—</span> views
+</span>
+
+<script is:inline>
+  function initViewCounts() {
+    document.querySelectorAll('.view-count').forEach(async el => {
+      if (el.dataset.initialized) return;
+      el.dataset.initialized = 'true';
+      const slug = el.dataset.slug;
+      const valueEl = el.querySelector('.view-count-value');
+      if (!slug || !valueEl) return;
+
+      const sessionKey = `viewed:${slug}`;
+      const alreadyViewed = sessionStorage.getItem(sessionKey);
+
+      try {
+        const method = alreadyViewed ? 'GET' : 'POST';
+        const res = await fetch(`/api/views/${encodeURIComponent(slug)}`, { method });
+        if (!res.ok) throw new Error('bad response');
+        const data = await res.json();
+        valueEl.textContent = typeof data.views === 'number' ? data.views.toLocaleString() : '0';
+        if (!alreadyViewed) sessionStorage.setItem(sessionKey, '1');
+      } catch {
+        el.style.display = 'none';
+      }
+    });
+  }
+  initViewCounts();
+  document.addEventListener('astro:after-swap', initViewCounts);
+</script>

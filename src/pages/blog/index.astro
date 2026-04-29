@@ -1,0 +1,35 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PostCard from '@components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = (await getCollection('blog'))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Blog | Cybrid Lab" description="All blog posts — finance, tech, AI, and personal reflections.">
+  <div class="space-y-8">
+    <header>
+      <h1 class="text-3xl font-bold">Blog</h1>
+      <p class="mt-2 text-(--color-text-secondary)">Thoughts on finance, tech, AI, and life.</p>
+    </header>
+
+    <div class="space-y-4">
+      {allPosts.map(post => (
+        <PostCard
+          id={post.id}
+          title={post.data.title}
+          description={post.data.description}
+          date={post.data.date}
+          category={post.data.category}
+          tags={post.data.tags}
+        />
+      ))}
+    </div>
+
+    {allPosts.length === 0 && (
+      <p class="text-(--color-text-secondary) text-center py-12">No posts yet. Check back soon!</p>
+    )}
+  </div>
+</BaseLayout>

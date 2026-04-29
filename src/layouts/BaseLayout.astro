@@ -1,0 +1,51 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import SEOHead from '@components/SEOHead.astro';
+import '@styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+}
+
+const {
+  title,
+  description = 'Cybrid Lab — Cyber minds at the frontiers of finance, tech, and AI.',
+  image = '/og-default.jpg',
+  type = 'website',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Cybrid Lab RSS" href="/rss.xml" />
+
+    <!-- Prevent flash of wrong theme -->
+    <script is:inline>
+      const theme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (theme === 'dark' || (!theme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+
+    <SEOHead title={title} description={description} image={image} type={type} />
+    <ClientRouter />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <Header />
+    <main class="flex-1 w-full max-w-3xl mx-auto px-4 py-8">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

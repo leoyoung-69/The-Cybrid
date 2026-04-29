@@ -1,0 +1,86 @@
+---
+---
+
+<div class="search-root" data-pagefind-ignore>
+  <input
+    type="search"
+    class="search-input w-full px-4 py-2 rounded-lg border border-(--color-border) bg-(--color-bg-primary) text-(--color-text-primary) focus:outline-none focus:border-(--color-accent) transition-colors"
+    placeholder="Search posts…"
+    autocomplete="off"
+  />
+  <p class="search-status text-sm text-(--color-text-secondary) mt-3 min-h-[1em]"></p>
+  <ul class="search-results mt-4 space-y-4"></ul>
+</div>
+
+<script is:inline>
+  (function () {
+    let pagefind;
+    let debounceTimer;
+
+    async function getPagefind() {
+      if (!pagefind) {
+        try {
+          pagefind = await import('/pagefind/pagefind.js');
+          await pagefind.options({ baseUrl: '/' });
+        } catch (err) {
+          pagefind = { error: true };
+        }
+      }
+      return pagefind;
+    }
+
+    async function runSearch(root, query) {
+      const status = root.querySelector('.search-status');
+      const results = root.querySelector('.search-results');
+      if (!status || !results) return;
+
+      if (!query || query.length < 2) {
+        status.textContent = '';
+        results.innerHTML = '';
+        return;
+      }
+
+      const pf = await getPagefind();
+      if (pf.error) {
+        status.textContent = 'Search index not available (run npm run build first).';
+        return;
+      }
+
+      status.textContent = 'Searching…';
+      const search = await pf.search(query);
+      if (!search.results.length) {
+        status.textContent = 'No results.';
+        results.innerHTML = '';
+        return;
+      }
+
+      const top = await Promise.all(search.results.slice(0, 8).map(r => r.data()));
+      status.textContent = `${search.results.length} result${search.results.length === 1 ? '' : 's'}`;
+      results.innerHTML = top
+        .map(
+          r => `
+          <li class="border border-[var(--color-border)] rounded-lg p-4 hover:border-[var(--color-accent)] transition-colors">
+            <a href="${r.url}" class="block">
+              <h3 class="font-semibold text-[var(--color-text-primary)]">${r.meta.title ?? r.url}</h3>
+              <p class="text-sm text-[var(--color-text-secondary)] mt-1">${r.excerpt}</p>
+            </a>
+          </li>`
+        )
+        .join('');
+    }
+
+    function initSearch() {
+      document.querySelectorAll('.search-root').forEach(root => {
+        if (root.dataset.initialized) return;
+        root.dataset.initialized = 'true';
+        const input = root.querySelector('.search-input');
+        input.addEventListener('input', () => {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => runSearch(root, input.value.trim()), 200);
+        });
+      });
+    }
+    initSearch();
+    document.addEventListener('astro:after-swap', initSearch);
+  })();
+</script>

@@ -1,0 +1,85 @@
+---
+import DarkModeToggle from './DarkModeToggle.astro';
+
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/research', label: 'Research' },
+  { href: '/about', label: 'About' },
+  { href: '/search', label: 'Search' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="border-b border-(--color-border) bg-(--color-bg-primary)">
+  <nav class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2 text-xl font-bold text-(--color-text-primary) hover:text-(--color-accent) transition-colors">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" aria-hidden="true" class="text-(--color-accent)">
+        <path d="M24 8a10 10 0 1 0 0 16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="24" cy="8" r="2.5" fill="currentColor"/>
+        <circle cx="24" cy="24" r="2.5" fill="currentColor"/>
+      </svg>
+      <span>Cybrid Lab</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <div class="hidden sm:flex items-center gap-6">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          class:list={[
+            'text-sm transition-colors',
+            currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
+              ? 'text-(--color-accent) font-medium'
+              : 'text-(--color-text-secondary) hover:text-(--color-text-primary)',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+      <DarkModeToggle />
+    </div>
+
+    <!-- Mobile: toggle + hamburger -->
+    <div class="flex items-center gap-2 sm:hidden">
+      <DarkModeToggle />
+      <button id="mobile-menu-btn" class="p-2 cursor-pointer" aria-label="Open menu">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav drawer -->
+  <div id="mobile-menu" class="hidden sm:hidden border-t border-(--color-border) px-4 py-4 space-y-3">
+    {navLinks.map(link => (
+      <a
+        href={link.href}
+        class:list={[
+          'block transition-colors',
+          currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
+            ? 'text-(--color-accent) font-medium'
+            : 'text-(--color-text-secondary) hover:text-(--color-text-primary)',
+        ]}
+      >
+        {link.label}
+      </a>
+    ))}
+  </div>
+</header>
+
+<script is:inline>
+  function initMobileMenu() {
+    document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+      document.getElementById('mobile-menu')?.classList.toggle('hidden');
+    });
+  }
+  initMobileMenu();
+  document.addEventListener('astro:after-swap', () => {
+    document.getElementById('mobile-menu')?.classList.add('hidden');
+    initMobileMenu();
+  });
+</script>

@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+/* Custom theme tokens */
+@theme {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-accent: #475569;
+  --color-accent-hover: #1e293b;
+  --color-border: #e5e7eb;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Dark mode overrides */
+.dark {
+  --color-bg-primary: #0f172a;
+  --color-bg-secondary: #1e293b;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-accent: #cbd5e1;
+  --color-accent-hover: #f1f5f9;
+  --color-border: #334155;
+}
+
+/* Base styles */
+@layer base {
+  body {
+    @apply bg-(--color-bg-primary) text-(--color-text-primary) font-sans;
+    @apply transition-colors duration-200;
+  }
+
+  /* Prose styles for blog content */
+  .prose h1 {
+    @apply text-(--color-text-primary) font-bold text-3xl mt-8 mb-4;
+  }
+
+  .prose h2 {
+    @apply text-(--color-text-primary) font-bold text-2xl mt-8 mb-3;
+  }
+
+  .prose h3 {
+    @apply text-(--color-text-primary) font-bold text-xl mt-6 mb-2;
+  }
+
+  .prose p {
+    @apply text-(--color-text-primary) leading-relaxed mb-4;
+  }
+
+  .prose a {
+    @apply text-(--color-accent) hover:text-(--color-accent-hover) underline;
+  }
+
+  .prose code {
+    @apply bg-(--color-bg-secondary) px-1.5 py-0.5 rounded text-sm font-mono;
+  }
+
+  .prose pre {
+    @apply bg-(--color-bg-secondary) p-4 rounded-lg overflow-x-auto mb-4 relative;
+  }
+
+  .prose table {
+    @apply w-full border-collapse text-sm mb-6;
+  }
+
+  .prose th {
+    @apply text-left font-semibold border-b-2 border-(--color-border) pb-2 px-3;
+  }
+
+  .prose td {
+    @apply border-b border-(--color-border) py-2 px-3;
+  }
+
+  .prose tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .code-lang-badge {
+    @apply absolute top-2 left-3 text-xs font-mono text-(--color-text-secondary) select-none uppercase opacity-70;
+  }
+
+  .copy-btn {
+    @apply absolute top-2 right-2 text-xs px-2 py-0.5 rounded bg-(--color-bg-primary) border border-(--color-border) text-(--color-text-secondary) hover:text-(--color-accent) cursor-pointer transition-colors;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-(--color-accent) pl-4 italic text-(--color-text-secondary) my-4;
+  }
+
+  .prose ul {
+    @apply list-disc pl-6 mb-4 space-y-1;
+  }
+
+  .prose ol {
+    @apply list-decimal pl-6 mb-4 space-y-1;
+  }
+
+  .prose li {
+    @apply text-(--color-text-primary) leading-relaxed;
+  }
+
+  .prose img {
+    @apply rounded-lg my-6;
+  }
+
+  .prose hr {
+    @apply border-(--color-border) my-8;
+  }
+
+  .prose strong {
+    @apply font-semibold;
+  }
+}

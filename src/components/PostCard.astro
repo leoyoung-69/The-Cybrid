@@ -1,0 +1,38 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  description: string;
+  date: Date;
+  category: string;
+  tags: string[];
+  basePath?: string;
+}
+
+const { id, title, description, date, category, tags, basePath = '/blog' } = Astro.props;
+const formattedDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(date);
+---
+
+<article class="group border border-(--color-border) rounded-lg p-5 hover:border-(--color-accent) transition-colors">
+  <a href={`${basePath}/${id}`} class="block space-y-3">
+    <div class="flex items-center gap-3 text-sm text-(--color-text-secondary)">
+      <time datetime={date.toISOString()}>{formattedDate}</time>
+      <span class="uppercase text-xs font-semibold tracking-wider px-2 py-0.5 rounded bg-(--color-bg-secondary)">
+        {category}
+      </span>
+    </div>
+    <h2 class="text-xl font-semibold group-hover:text-(--color-accent) transition-colors">
+      {title}
+    </h2>
+    <p class="text-(--color-text-secondary) line-clamp-2">{description}</p>
+    {tags.length > 0 && (
+      <div class="flex flex-wrap gap-2 pt-1">
+        {tags.slice(0, 3).map(tag => (
+          <span class="text-xs bg-(--color-bg-secondary) text-(--color-text-secondary) px-2 py-0.5 rounded">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+  </a>
+</article>
