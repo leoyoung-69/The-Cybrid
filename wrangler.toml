@@ -5,7 +5,7 @@ pages_build_output_dir = "./dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "cybrid-lab"
-database_id = "REPLACE_WITH_ID_FROM_WRANGLER_D1_CREATE"
+database_id = "e6c164b2-3d79-4609-b11e-d1bc3eaeb3b0"
 
 # Secrets (RESEND_API_KEY, etc.) are set via the Cloudflare dashboard
 # or `npx wrangler pages secret put <NAME>`, not in this file.

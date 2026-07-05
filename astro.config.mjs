@@ -5,7 +5,7 @@ import cloudflare from '@astrojs/cloudflare';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://cybrid-lab.pages.dev',
+  site: 'https://cybridlab.com',
   output: 'static',
   adapter: cloudflare({
     platformProxy: { enabled: true },
