@@ -10,6 +10,8 @@ interface Props {
   description?: string;
   image?: string;
   type?: 'website' | 'article';
+  publishedDate?: Date;
+  updatedDate?: Date;
 }
 
 const {
@@ -17,6 +19,8 @@ const {
   description = 'Cybrid Lab — Cyber minds at the frontiers of finance, tech, and AI.',
   image = '/og-default.jpg',
   type = 'website',
+  publishedDate,
+  updatedDate,
 } = Astro.props;
 ---
 
@@ -38,7 +42,14 @@ const {
       }
     </script>
 
-    <SEOHead title={title} description={description} image={image} type={type} />
+    <SEOHead
+      title={title}
+      description={description}
+      image={image}
+      type={type}
+      publishedDate={publishedDate}
+      updatedDate={updatedDate}
+    />
     <ClientRouter />
   </head>
   <body class="min-h-screen flex flex-col">

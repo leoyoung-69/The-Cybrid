@@ -16,11 +16,16 @@ function getDB(locals: App.Locals): D1 | null {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  let body: { email?: unknown };
+  let body: { email?: unknown; website?: unknown };
   try {
     body = await request.json();
   } catch {
     return new Response(JSON.stringify({ error: 'invalid json' }), { status: 400 });
+  }
+
+  // Honeypot: real users leave this hidden field empty. Pretend success for bots.
+  if (typeof body.website === 'string' && body.website.trim() !== '') {
+    return new Response(JSON.stringify({ ok: true }), { status: 200 });
   }
 
   const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';

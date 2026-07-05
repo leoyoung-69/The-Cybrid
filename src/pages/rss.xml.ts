@@ -3,21 +3,28 @@ import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
 
 export async function GET(context: APIContext) {
-  const posts = (await getCollection('blog'))
-    .filter(post => !post.data.draft)
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  const blog = await getCollection('blog');
+  const research = await getCollection('research');
+
+  const items = [
+    ...blog.map(post => ({ post, base: '/blog' })),
+    ...research.map(post => ({ post, base: '/research' })),
+  ]
+    .filter(({ post }) => !post.data.draft)
+    .sort((a, b) => b.post.data.date.valueOf() - a.post.data.date.valueOf())
+    .map(({ post, base }) => ({
+      title: post.data.title,
+      description: post.data.description,
+      pubDate: post.data.date,
+      link: `${base}/${post.id}/`,
+      categories: [post.data.category, ...post.data.tags],
+    }));
 
   return rss({
     title: 'Cybrid Lab',
     description: 'Cyber minds at the frontiers of finance, tech, and AI.',
     site: context.site!,
-    items: posts.map(post => ({
-      title: post.data.title,
-      description: post.data.description,
-      pubDate: post.data.date,
-      link: `/blog/${post.id}/`,
-      categories: [post.data.category, ...post.data.tags],
-    })),
+    items,
     customData: '<language>en-us</language>',
   });
 }

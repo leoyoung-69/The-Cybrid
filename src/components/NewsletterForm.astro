@@ -8,6 +8,15 @@
   <p class="text-xs text-(--color-text-secondary)">
     Get new posts delivered to your inbox.
   </p>
+  <!-- Honeypot: humans never see or fill this; bots that do are dropped server-side -->
+  <input
+    type="text"
+    name="website"
+    tabindex="-1"
+    autocomplete="off"
+    aria-hidden="true"
+    style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"
+  />
   <div class="flex gap-2">
     <input
       id="newsletter-email"
@@ -34,6 +43,7 @@
       form.dataset.initialized = 'true';
       const status = form.querySelector('.newsletter-status');
       const input = form.querySelector('input[name="email"]');
+      const honeypot = form.querySelector('input[name="website"]');
       const button = form.querySelector('button[type="submit"]');
 
       form.addEventListener('submit', async e => {
@@ -49,7 +59,7 @@
           const res = await fetch('/api/newsletter', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ email, website: honeypot?.value ?? '' }),
           });
           if (!res.ok) throw new Error('Request failed');
           status.textContent = "Thanks! We'll be in touch.";

@@ -56,7 +56,14 @@ const formattedUpdated = updatedDate
   : null;
 ---
 
-<BaseLayout title={`${title} | Cybrid Lab`} description={description} image={image} type="article">
+<BaseLayout
+  title={`${title} | Cybrid Lab`}
+  description={description}
+  image={image}
+  type="article"
+  publishedDate={date}
+  updatedDate={updatedDate}
+>
   <article class="space-y-6">
     <header class="space-y-4">
       <div class="flex flex-wrap items-center gap-3 text-sm text-(--color-text-secondary)">
