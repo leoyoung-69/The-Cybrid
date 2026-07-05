@@ -1,0 +1,75 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { readdirSync, readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+// Briefings are standalone HTML reports served verbatim from
+// public/research/briefings/. This page enumerates them at build time.
+const dir = join(process.cwd(), 'public', 'research', 'briefings');
+
+const briefings = existsSync(dir)
+  ? readdirSync(dir)
+      .filter(f => f.endsWith('.html'))
+      .map(file => {
+        const html = readFileSync(join(dir, file), 'utf8');
+        const title =
+          html.match(/<title>([^<]*)<\/title>/i)?.[1]?.trim() ??
+          file.replace(/\.html$/, '');
+        const dateMatch = file.match(/^(\d{4}-\d{2}-\d{2})/);
+        const date = dateMatch ? new Date(`${dateMatch[1]}T00:00:00Z`) : null;
+        return { file, title, date };
+      })
+      .sort((a, b) => (b.date?.valueOf() ?? 0) - (a.date?.valueOf() ?? 0))
+  : [];
+
+const formatDate = (d: Date) =>
+  new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' }).format(d);
+---
+
+<BaseLayout
+  title="Financial Briefings | Cybrid Lab"
+  description="Automated daily financial briefings — macro, tech, and geopolitics."
+>
+  <div class="space-y-8">
+    <header>
+      <h1 class="text-3xl font-bold">Financial Briefings</h1>
+      <p class="mt-2 text-(--color-text-secondary)">
+        Automated daily reports covering macro &amp; markets, technology &amp; AI,
+        and geopolitics. Each opens as a standalone report.
+      </p>
+    </header>
+
+    <div class="space-y-3">
+      {briefings.map(b => (
+        <a
+          href={`/research/briefings/${b.file}`}
+          class="group flex items-center justify-between gap-4 border border-(--color-border) rounded-lg p-4 hover:border-(--color-accent) transition-colors"
+        >
+          <div class="min-w-0">
+            <div class="font-medium group-hover:text-(--color-accent) transition-colors line-clamp-1">
+              {b.title}
+            </div>
+            {b.date && (
+              <time datetime={b.date.toISOString()} class="text-sm text-(--color-text-secondary)">
+                {formatDate(b.date)}
+              </time>
+            )}
+          </div>
+          <span class="text-(--color-text-secondary) group-hover:text-(--color-accent) transition-colors shrink-0" aria-hidden="true">
+            &rarr;
+          </span>
+        </a>
+      ))}
+    </div>
+
+    {briefings.length === 0 && (
+      <p class="text-(--color-text-secondary) text-center py-12">No briefings yet. Check back soon!</p>
+    )}
+
+    <div>
+      <a href="/research" class="text-(--color-accent) hover:text-(--color-accent-hover) transition-colors text-sm font-medium">
+        &larr; Back to research
+      </a>
+    </div>
+  </div>
+</BaseLayout>

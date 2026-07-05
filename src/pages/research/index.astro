@@ -20,6 +20,23 @@ const allPosts = (await getCollection('research'))
       </p>
     </header>
 
+    <a
+      href="/research/briefings"
+      class="group flex items-center justify-between gap-4 border border-(--color-border) rounded-lg p-5 bg-(--color-bg-secondary)/40 hover:border-(--color-accent) transition-colors"
+    >
+      <div>
+        <h2 class="font-semibold group-hover:text-(--color-accent) transition-colors">
+          Daily Financial Briefings
+        </h2>
+        <p class="mt-1 text-sm text-(--color-text-secondary)">
+          Automated reports on macro &amp; markets, technology &amp; AI, and geopolitics.
+        </p>
+      </div>
+      <span class="text-(--color-text-secondary) group-hover:text-(--color-accent) transition-colors shrink-0" aria-hidden="true">
+        &rarr;
+      </span>
+    </a>
+
     <div class="space-y-4">
       {allPosts.map(post => (
         <PostCard
